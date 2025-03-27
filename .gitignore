@@ -1,0 +1,11 @@
+node_modules/
+/backend/node_modules/
+/backend/data/
+/backend/data-redis/
+dist/
+*.log
+npm-debug.log
+.dockerignore
+Dockerfile
+.git
+.env
