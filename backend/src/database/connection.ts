@@ -4,7 +4,7 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 
 const connection = new Sequelize({
-  dialect: 'postgres',
+  dialect: 'mysql',
   host: process.env.POSTGRES_HOST,
   username: process.env.POSTGRES_USER,
   password: process.env.POSTGRES_PASSWORD,

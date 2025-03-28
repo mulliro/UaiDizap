@@ -1,49 +1,53 @@
+version: '3.8'  # Define a versão do Docker Compose
+
 services:
   backend:
-    image: node:16
-    container_name: chat-backend
-    command: bash
-    tty: true
-    stdin_open: true
-    restart: always
+    image: node:16  # Usa uma imagem oficial do Node.js versão 16
+    container_name: chat-backend  # Nome do container
+    command: bash  # Mantém o container ativo rodando um shell bash
+    tty: true  # Permite entrada interativa
+    stdin_open: true  # Mantém a entrada padrão aberta
+    restart: always  # Reinicia automaticamente o container em caso de falha
     ports:
-      - "3000:3000"
+      - "3000:3000"  # Mapeia a porta 3000 do host para a porta 3000 do container
     networks:
-      - chat-network
+      - chat-network  # Conecta o container à rede personalizada
     volumes:
-      - ./:/app/
+      - ./:/app/  # Monta o diretório local no container (permite desenvolvimento dinâmico)
     depends_on:
-      - db
-      - redis
+      - db  # Garante que o banco de dados seja iniciado antes do backend
+      - redis  # Garante que o Redis seja iniciado antes do backend
     environment:
-      POSTGRES_USER: root
-      POSTGRES_PASSWORD: password
-      POSTGRES_HOST: chat-db
-      JWT_SECRET: secret
+      DB_USER: root  # Usuário do banco de dados
+      DB_PASSWORD: password  # Senha do banco de dados
+      DB_HOST: chat-db  # Nome do serviço do banco de dados no Docker (hostname interno)
+      DB_NAME: chat_app_db  # Nome do banco de dados
+      DB_DIALECT: mysql  # Define o dialect para Sequelize
+      JWT_SECRET: secret  # Chave secreta para autenticação JWT
+
   db:
-    image: postgres:latest
-    container_name: chat-db
+    image: mysql:latest  # Usa a imagem oficial mais recente do MySQL
+    container_name: chat-db  # Nome do container do banco de dados
+    restart: always  # Reinicia automaticamente em caso de falha
     environment:
-      POSTGRES_USER: root
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: chat_app_db
+      MYSQL_ROOT_PASSWORD: password  # Define a senha do usuário root do MySQL
+      MYSQL_DATABASE: chat_app_db  # Cria automaticamente o banco de dados na inicialização
     ports:
-      - "5432:5432"
-    volumes:
-      - ./backend/data:/var/lib/postgresql/data
+      - "3307:3306"  # Mapeia a porta 3306 do host para a porta 3306 do container (porta padrão do MySQL)
     networks:
-      - chat-network
+      - chat-network  # Conecta o container à rede personalizada
 
   redis:
-    image: redis:latest
-    container_name: chat-redis
+    image: redis:latest  # Usa a imagem oficial do Redis mais recente
+    container_name: chat-redis  # Nome do container do Redis
+    restart: always  # Reinicia automaticamente em caso de falha
     volumes:
-      - ./backend/data-redis:/data
+      - ./backend/data-redis:/data  # Persistência dos dados do Redis
     ports:
-      - "6379:6379"
+      - "6380:6379"  # Mapeia a porta 6379 do host para a porta 6379 do container (porta padrão do Redis)
     networks:
-      - chat-network
+      - chat-network  # Conecta o container à rede personalizada
 
 networks:
   chat-network:
-    driver: bridge
+    driver: bridge  # Define a rede personalizada como do tipo "bridge"

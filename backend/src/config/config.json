@@ -1,0 +1,10 @@
+{
+  "development": {
+    "username": "root",
+    "password": "password",
+    "database": "chat_app_db",
+    "host": "chat-db",
+    "dialect": "mysql",
+    "port": 3307
+  }
+}
