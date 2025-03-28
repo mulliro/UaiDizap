@@ -33,7 +33,7 @@ services:
       MYSQL_ROOT_PASSWORD: password  # Define a senha do usuário root do MySQL
       MYSQL_DATABASE: chat_app_db  # Cria automaticamente o banco de dados na inicialização
     ports:
-      - "3307:3306"  # Mapeia a porta 3306 do host para a porta 3306 do container (porta padrão do MySQL)
+      - "3307:3306"  # Mapeia a porta 3307 do host para a porta 3306 do container (porta padrão do MySQL)
     networks:
       - chat-network  # Conecta o container à rede personalizada
 
@@ -44,7 +44,7 @@ services:
     volumes:
       - ./backend/data-redis:/data  # Persistência dos dados do Redis
     ports:
-      - "6380:6379"  # Mapeia a porta 6379 do host para a porta 6379 do container (porta padrão do Redis)
+      - "6380:6379"  # Mapeia a porta 6380 do host para a porta 6379 do container (porta padrão do Redis)
     networks:
       - chat-network  # Conecta o container à rede personalizada
 
