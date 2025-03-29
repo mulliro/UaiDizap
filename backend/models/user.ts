@@ -3,23 +3,25 @@ import { Model, DataTypes, Sequelize } from 'sequelize';
 export default (sequelize: Sequelize) => {
   class User extends Model {
     public id!: number;
-    public name!: string;
+    public phone_number!: string;
+    public username!: string;
     public email!: string;
-    public password!: string;
+    protected password_hash!: string;
+    public full_name!: string;
+    public profile_picture!: string;
 
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
     static associate(models: any) {
-      // define association here
+      // User.hasMany(models.Post, { foreignKey: 'userId' });
     }
   }
 
   User.init(
     {
-      name: {
+      phone_number: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      username: {
         type: DataTypes.STRING,
         allowNull: false,
       },
@@ -28,16 +30,34 @@ export default (sequelize: Sequelize) => {
         allowNull: false,
         unique: true,
       },
-      password: {
+      password_hash: {
         type: DataTypes.STRING,
         allowNull: false,
+      },
+      full_name: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      profile_picture: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      createdAt: {
+        type: DataTypes.DATE,
+        allowNull: false,
+        defaultValue: DataTypes.NOW,
+      },
+      updatedAt: {
+        type: DataTypes.DATE,
+        allowNull: false,
+        defaultValue: DataTypes.NOW,
       },
     },
     {
       sequelize,
       modelName: 'User',
       tableName: 'users',
-      timestamps: true, // Adiciona createdAt e updatedAt automaticamente
+      timestamps: true,
     }
   );
 
