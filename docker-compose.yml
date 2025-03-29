@@ -1,51 +1,78 @@
 services:
   backend:
+    user: "${UID}:${GID}"  # Substitua {UID} e {GID} pelos valores do seu usuário
     image: node:16  # Usa uma imagem oficial do Node.js versão 16
     container_name: chat-backend  # Nome do container
-    command: bash  # Mantém o container ativo rodando um shell bash
+    command: npm run dev  # Comando para iniciar o backend em modo de desenvolvimento
     tty: true  # Permite entrada interativa
     stdin_open: true  # Mantém a entrada padrão aberta
     restart: always  # Reinicia automaticamente o container em caso de falha
     ports:
-      - "3000:3000"  # Mapeia a porta 3000 do host para a porta 3000 do container
+      - "3001:3000"  # Mapeia a porta 3001 do host para a porta 3000 do container
     networks:
       - chat-network  # Conecta o container à rede personalizada
+    working_dir: /app/backend  # Define o diretório de trabalho dentro do container
     volumes:
       - ./:/app/  # Monta o diretório local no container (permite desenvolvimento dinâmico)
+      - ./logs:/app/logs  # Monta o diretório de logs local no container
     depends_on:
-      - db  # Garante que o banco de dados seja iniciado antes do backend
-      - redis  # Garante que o Redis seja iniciado antes do backend
+      db:
+        condition: service_healthy # Garante que o banco de dados seja iniciado antes do backend
+      redis:  # Garante que o Redis seja iniciado antes do backend
+        condition: service_healthy
     environment:
-      DB_USER: root  # Usuário do banco de dados
-      DB_PASSWORD: password  # Senha do banco de dados
-      DB_HOST: chat-db  # Nome do serviço do banco de dados no Docker (hostname interno)
-      DB_NAME: chat_app_db  # Nome do banco de dados
-      DB_DIALECT: mysql  # Define o dialect para Sequelize
-      JWT_SECRET: secret  # Chave secreta para autenticação JWT
+      - DB_USER=${DB_USER}  # Variável de ambiente para o usuário do banco de dados
+      - DB_PASSWORD=${DB_PASSWORD}  # Variável de ambiente para a senha do banco de dados
+      - DB_HOST=${DB_HOST}  # Variável de ambiente para o host do banco de dados
+      - DB_NAME=${DB_NAME}  # Variável de ambiente para o nome do banco de dados
+      - DB_DIALECT=${DB_DIALECT}  # Variável de ambiente para o dialeto do banco de dados
+      - JWT_SECRET=${JWT_SECRET}  # Variável de ambiente para o segredo do JWT
 
   db:
-    image: mysql:latest  # Usa a imagem oficial mais recente do MySQL
+    image: mysql:8.0  # Usa a imagem oficial na versão 8.0 do MySQL
     container_name: chat-db  # Nome do container do banco de dados
     restart: always  # Reinicia automaticamente em caso de falha
     environment:
-      MYSQL_ROOT_PASSWORD: password  # Define a senha do usuário root do MySQL
-      MYSQL_DATABASE: chat_app_db  # Cria automaticamente o banco de dados na inicialização
+    - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}  # Senha do usuário root do MySQL
+    - MYSQL_DATABASE=${DB_NAME}  # Nome do banco de dados a ser criado
     ports:
       - "3307:3306"  # Mapeia a porta 3307 do host para a porta 3306 do container (porta padrão do MySQL)
+    volumes:
+      - mysql-data:/var/lib/mysql  # Persistência dos dados do MySQL
     networks:
       - chat-network  # Conecta o container à rede personalizada
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]  # Verifica se o MySQL está ativo
+      interval: 10s  # Intervalo entre as verificações de saúde
+      timeout: 5s  # Tempo limite para a verificação de saúde
+      retries: 3  # Número de tentativas antes de considerar o serviço como não saudável
 
   redis:
-    image: redis:latest  # Usa a imagem oficial do Redis mais recente
+    image: redis:6.2  # Usa a imagem oficial do Redis na versão 6.2
     container_name: chat-redis  # Nome do container do Redis
     restart: always  # Reinicia automaticamente em caso de falha
+    command: redis-server --save 60 1 --loglevel warning   # Comando para iniciar o Redis com persistência 
     volumes:
-      - ./backend/data-redis:/data  # Persistência dos dados do Redis
-    ports:
+      - redis-data:/data  # Persistência dos dados do Redis
+    environment:
+      - REDIS_HOST=${REDIS_HOST}  # Nome do serviço do Redis no Docker (hostname interno)
+      - REDIS_PORT=${REDIS_PORT}  # Porta padrão do Redis
+      - REDIS_PASSWORD=${REDIS_PASSWORD}  # Senha para autenticação no Redis
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]  # Verifica se o Redis está ativo
+      interval: 10s  # Intervalo entre as verificações de saúde
+      timeout: 5s  # Tempo limite para a verificação de saúde
+      retries: 3  # Número de tentativas antes de considerar o serviço como não saudável
+    ports: 
       - "6380:6379"  # Mapeia a porta 6380 do host para a porta 6379 do container (porta padrão do Redis)
     networks:
       - chat-network  # Conecta o container à rede personalizada
-
 networks:
   chat-network:
+    name: chat-app-network  # Nome da rede personalizada
     driver: bridge  # Define a rede personalizada como do tipo "bridge"
+volumes:
+  mysql-data:  # Volume para persistência dos dados do MySQL
+    driver: local  # Define o driver do volume como local
+  redis-data:  # Volume para persistência dos dados do Redis
+    driver: local  # Define o driver do volume como local
