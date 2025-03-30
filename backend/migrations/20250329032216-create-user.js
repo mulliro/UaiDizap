@@ -44,9 +44,9 @@ module.exports = {
         allowNull: false,
         type: Sequelize.DATE
       }
-    });
+    }, { tableName: 'Users' });
   },
-  async down(queryInterface, Sequelize) {
+  async down(queryInterface, __Sequelize) {
     await queryInterface.dropTable('Users');
   }
 };

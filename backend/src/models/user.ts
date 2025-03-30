@@ -6,7 +6,7 @@ export default (sequelize: Sequelize) => {
     public phone_number!: string;
     public username!: string;
     public email!: string;
-    protected password_hash!: string;
+    public password_hash!: string;
     public full_name!: string;
     public profile_picture!: string;
 
@@ -29,6 +29,9 @@ export default (sequelize: Sequelize) => {
         type: DataTypes.STRING,
         allowNull: false,
         unique: true,
+        validate: {
+          isEmail: true,
+        },
       },
       password_hash: {
         type: DataTypes.STRING,
@@ -56,7 +59,7 @@ export default (sequelize: Sequelize) => {
     {
       sequelize,
       modelName: 'User',
-      tableName: 'users',
+      tableName: 'Users',
       timestamps: true,
     }
   );
