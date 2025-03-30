@@ -1,6 +1,7 @@
-const { resolve } = require('path');
+require('dotenv').config();
 
-require('dotenv').config({path: resolve(__dirname, '../.env')});
+const { resolve } = require('path');
+const migrationPath = resolve(__dirname, '../../migrations');
 
 module.exports = {
   development: {
@@ -10,5 +11,7 @@ module.exports = {
     host: process.env.DB_HOST || "localhost",
     dialect: process.env.DB_DIALECT || "mysql",
     port: parseInt(process.env.DB_PORT, 10) || 3306,
+    migration: 'json',
+    migrationStoragePath: migrationPath,
   },
 };

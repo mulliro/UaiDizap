@@ -3,7 +3,7 @@ services:
     user: "${UID}:${GID}"  # Substitua {UID} e {GID} pelos valores do seu usuário
     image: node:16  # Usa uma imagem oficial do Node.js versão 16
     container_name: chat-backend  # Nome do container
-    command: npm run dev  # Comando para iniciar o backend em modo de desenvolvimento
+    command: sh -c "npx dockerize -wait tcp://chat-db:3306 -timeout 30s" && npm run dev  # Comando para iniciar o backend em modo de desenvolvimento
     tty: true  # Permite entrada interativa
     stdin_open: true  # Mantém a entrada padrão aberta
     restart: always  # Reinicia automaticamente o container em caso de falha
@@ -33,8 +33,10 @@ services:
     container_name: chat-db  # Nome do container do banco de dados
     restart: always  # Reinicia automaticamente em caso de falha
     environment:
-    - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}  # Senha do usuário root do MySQL
-    - MYSQL_DATABASE=${DB_NAME}  # Nome do banco de dados a ser criado
+      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}  # Senha do usuário root do MySQL
+      - MYSQL_DATABASE=${DB_NAME}  # Nome do banco de dados a ser criado
+      - MYSQL_USER=${DB_USER}  # Usuário do banco de dados
+      - MYSQL_PASSWORD=${DB_PASSWORD}  # Senha do usuário do banco de dados
     ports:
       - "3307:3306"  # Mapeia a porta 3307 do host para a porta 3306 do container (porta padrão do MySQL)
     volumes:
