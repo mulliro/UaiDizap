@@ -1,38 +1,22 @@
-import { Request, RequestHandler, Response } from 'express';
-import { ParsedQs } from 'qs';
-import { UserService } from '../services/user.service';
+import { Request, Response } from 'express';
+import { createUser, getUserById, getAllUsers } from '../services/user.service';
+import statusCode from '../utils/statusCode';
 
-export class UserController {
-    static getUserById: RequestHandler<{ id: string; }, any, any, ParsedQs, Record<string, any>>;
-    static getAllUsers(_arg0: string, _getAllUsers: any) {
-        throw new Error('Method not implemented.');
-    }
-    private userService: UserService;
+const { CREATED, OK } = statusCode;
 
-    constructor() {
-        this.userService = new UserService();
-    }
+export const createUserController = async (req: Request, res: Response): Promise<void> => {
+  const userData = req.body;
+  const user = await createUser(userData);
+  res.status(CREATED).json(user);
+};
 
-    async getAllUsers(__req: Request, res: Response): Promise<void> {
-        try {
-            const users = await this.userService.getAllUsers();
-            res.status(200).json(users);
-        } catch (error) {
-            res.status(500).json({ message: 'Error fetching users', error });
-        }
-    }
+export const getUserByIdController = async (req: Request, res: Response): Promise<void> => {
+  const { id } = req.params;
+  const user = await getUserById(Number(id));
+  res.status(OK).json(user);
+};
 
-    async getUserById(req: Request, res: Response): Promise<void> {
-        try {
-            const userId = parseInt(req.params.id, 10);
-            const user = await this.userService.getUserById(userId);
-            if (user) {
-                res.status(200).json(user);
-            } else {
-                res.status(404).json({ message: 'User not found' });
-            }
-        } catch (error) {
-            res.status(500).json({ message: 'Error fetching user', error });
-        }
-    }
-}
+export const getAllUsersController = async (_req: Request, res: Response): Promise<void> => {
+  const users = await getAllUsers();
+  res.status(OK).json(users);
+};
