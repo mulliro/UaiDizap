@@ -1,12 +1,27 @@
 import models from '../models';
+import { IUserAttributes, IUserCreationAttributes } from '../interfaces';
+import statusCode from '../utils/statusCode';
+import GenerateError from '../utils/GenerateError';
+
 const { User } = models;
+const { INTERNAL_SERVER_ERROR, NOT_FOUND } = statusCode;
 
-export class UserService {
-  async getUserById(id: number) {
-    return await User.findByPk(id);
-  }
+export const createUser = async (userData: IUserCreationAttributes): Promise<IUserAttributes> => {
+  return await User.create(userData);
+};
 
-  async getAllUsers() {
-    return await User.findAll();
+export const getUserById = async (id: number): Promise<IUserAttributes> => {
+  const user = await User.findByPk(id);
+  if (!user) {
+    throw new GenerateError(NOT_FOUND, 'Usuário não encontrado');
   }
-}
+  return user;
+};
+
+export const getAllUsers = async (): Promise<IUserAttributes[]> => {
+  const users = await User.findAll();
+  if (!users) {
+    throw new GenerateError(INTERNAL_SERVER_ERROR, 'Nenhum usuário encontrado');
+  }
+  return users;
+};
