@@ -8,6 +8,6 @@
     "outDir": "./dist",
     "rootDir": "./src"
   },
-  "include": ["src/**/*", "../models/**/*"],
+  "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"]
 }
