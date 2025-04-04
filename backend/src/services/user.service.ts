@@ -1,4 +1,4 @@
-import models from '../models';
+import { models } from '../models';
 import { IUserAttributes, IUserCreationAttributes } from '../interfaces';
 import statusCode from '../utils/statusCode';
 import GenerateError from '../utils/GenerateError';
@@ -20,8 +20,9 @@ export const getUserById = async (id: number): Promise<IUserAttributes> => {
 
 export const getAllUsers = async (): Promise<IUserAttributes[]> => {
   const users = await User.findAll();
+  console.log(users);
   if (!users) {
-    throw new GenerateError(INTERNAL_SERVER_ERROR, 'Nenhum usuário encontrado');
+    throw new GenerateError(INTERNAL_SERVER_ERROR, 'Nenhum erro');
   }
   return users;
 };
