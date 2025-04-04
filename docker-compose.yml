@@ -20,6 +20,8 @@ services:
         condition: service_healthy # Garante que o banco de dados seja iniciado antes do backend
       redis:  # Garante que o Redis seja iniciado antes do backend
         condition: service_healthy
+    env_file:
+      - ./backend/.env
     environment:
       - DB_USER=${DB_USER}  # Variável de ambiente para o usuário do banco de dados
       - DB_PASSWORD=${DB_PASSWORD}  # Variável de ambiente para a senha do banco de dados
@@ -27,6 +29,11 @@ services:
       - DB_NAME=${DB_NAME}  # Variável de ambiente para o nome do banco de dados
       - DB_DIALECT=${DB_DIALECT}  # Variável de ambiente para o dialeto do banco de dados
       - JWT_SECRET=${JWT_SECRET}  # Variável de ambiente para o segredo do JWT
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_PORT=${REDIS_PORT}
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - UID=${UID}
+      - GID=${GID}
 
   db:
     image: mysql:8.0  # Usa a imagem oficial na versão 8.0 do MySQL
