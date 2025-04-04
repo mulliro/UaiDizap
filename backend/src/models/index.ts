@@ -1,11 +1,12 @@
-import initUser from './user';
+import { defineUserModel } from './user';
 import connection from '../database/connection';
 
-if (!connection) {
-    throw new Error('Database connection is not initialized.');
+const models = {
+    User: defineUserModel(connection)
 }
-const User = initUser(connection);
 
-export default {
-    User
-};
+Object.values(models).forEach((model: any) => {
+    if (model.associate) model.associate(models);
+})
+
+export { connection, models };

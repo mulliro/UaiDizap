@@ -1,29 +1,33 @@
 import { Model, DataTypes, Sequelize } from 'sequelize';
 
-export default (sequelize: Sequelize) => {
+export const defineUserModel = (sequelize: Sequelize) => {
   class User extends Model {
     public id!: number;
-    public phone_number!: string;
+    public full_name!: string;
     public username!: string;
     public email!: string;
+    public phone_number!: string;
     public password_hash!: string;
-    public full_name!: string;
     public profile_picture!: string;
+    public readonly createdAt!: Date;
+    public readonly updatedAt!: Date;
 
-    static associate(models: any) {
-      // User.hasMany(models.Post, { foreignKey: 'userId' });
+    static associate(__models: any) {
+      // Relacionamentos podem ser definidos aqui
+      // Exemplo: User.hasMany(models.Post, { foreignKey: 'userId' });
     }
   }
 
   User.init(
     {
-      phone_number: {
+      full_name: {
         type: DataTypes.STRING,
-        allowNull: true,
+        allowNull: false,
       },
       username: {
         type: DataTypes.STRING,
         allowNull: false,
+        unique: true,
       },
       email: {
         type: DataTypes.STRING,
@@ -33,11 +37,12 @@ export default (sequelize: Sequelize) => {
           isEmail: true,
         },
       },
-      password_hash: {
+      phone_number: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
+        unique: true,
       },
-      full_name: {
+      password_hash: {
         type: DataTypes.STRING,
         allowNull: false,
       },
@@ -59,7 +64,7 @@ export default (sequelize: Sequelize) => {
     {
       sequelize,
       modelName: 'User',
-      tableName: 'Users',
+      tableName: 'users',
       timestamps: true,
     }
   );

@@ -1,18 +1,17 @@
 import { Sequelize } from "sequelize";
+import logger from './logger';
 
 export default async (connection: Sequelize, retries = 5, delay = 2000) => {
     while (retries > 0) {
       try {
         await connection.authenticate();
-        console.log(`
-          Database connected successfully.`
-        );
+        logger.info(`Database connected successfully.`);
         return;
       } catch (error) {
         const errorMessage = (error as Error).message;
-        console.error(`Database connection failed: ${ errorMessage }`);
+        logger.info(`Database connection failed: ${ errorMessage }`);
         retries -= 1;
-        console.log(`Retrying in ${delay / 1000} seconds... (${ retries } retries left)`);
+        logger.info(`Retrying in ${delay / 1000} seconds... (${ retries } retries left)`);
         await new Promise((resolve) => setTimeout(resolve, delay));
       }
     }
