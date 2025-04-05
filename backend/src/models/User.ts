@@ -12,10 +12,7 @@ export const defineUserModel = (sequelize: Sequelize) => {
     public readonly createdAt!: Date;
     public readonly updatedAt!: Date;
 
-    static associate(__models: any) {
-      // Relacionamentos podem ser definidos aqui
-      // Exemplo: User.hasMany(models.Post, { foreignKey: 'userId' });
-    }
+    static associate(__models: any) {};
   }
 
   User.init(
