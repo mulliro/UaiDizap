@@ -6,12 +6,12 @@ import { defineChatMembersModel } from './ChatMembers';
 
 const models = {
     User: defineUserModel(connection),
-    Message: defineMessageModel(connection),
     Chat: defineChatModel(connection),
+    Message: defineMessageModel(connection),
     ChatMembers: defineChatMembersModel(connection)
-}
+};
 
-Object.values(models).forEach((model: any) => {
+Object.values(models).forEach((model: any) => {  
     if (model.associate) return model.associate(models);
 })
 

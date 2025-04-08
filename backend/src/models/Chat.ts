@@ -40,4 +40,5 @@ export const defineChatModel = (sequelize: Sequelize) => {
             timestamps: true,
         }
     )
+    return Chat;
 }

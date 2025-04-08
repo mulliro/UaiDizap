@@ -12,7 +12,7 @@ export const defineUserModel = (sequelize: Sequelize) => {
     public readonly createdAt!: Date;
     public readonly updatedAt!: Date;
 
-    static associate(__models: any) {};
+    static associate(_models: any) { };
   }
 
   User.init(

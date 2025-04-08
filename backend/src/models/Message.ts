@@ -49,6 +49,7 @@ export const defineMessageModel = (sequelize: Sequelize) => {
         modelName: 'Message',
         tableName: 'messages',
         timestamps: true,
-    })
+    });
+    
     return Message;
 };
