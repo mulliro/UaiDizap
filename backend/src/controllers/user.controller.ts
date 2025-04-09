@@ -1,7 +1,8 @@
 import { Request, Response } from 'express';
-import { createUser, getUserById, getAllUsers } from '../services/user.service';
+import UserService from '../services/user.service';
 import statusCode from '../utils/statusCode';
 
+const { createUser, getUserById, getAllUsers } = UserService();
 const { CREATED, OK } = statusCode;
 
 export const createUserController = async (req: Request, res: Response): Promise<void> => {

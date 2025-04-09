@@ -1,7 +1,8 @@
 import { Model, DataTypes, Sequelize } from 'sequelize';
+import { IChatAttributes, IChatCreationAttributes} from '../interfaces/index';
 
 export const defineChatModel = (sequelize: Sequelize) => {
-    class Chat extends Model {
+    class Chat extends Model<IChatAttributes, IChatCreationAttributes> {
         public id!: number
         public chat_type!: string
         public readonly createdAt!: Date
